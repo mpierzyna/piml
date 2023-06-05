@@ -1,0 +1,3 @@
+[submodule "submodules/BuckinghamPy"]
+	path = submodules/BuckinghamPy
+	url = https://github.com/saadgroup/BuckinghamPy
