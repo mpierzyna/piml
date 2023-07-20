@@ -1,0 +1,24 @@
+name: piml
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - flaml=1.1.2
+  - h5netcdf=1.1.0
+  - isodate=0.6.1
+  - joblib=1.2.0
+  - matplotlib=3.6.3
+  - netcdf4=1.6.2
+  - numpy=1.23.5
+  - pandas=1.5.3
+  - pydantic=1.10.4
+  - python=3.10.*
+  - scikit-learn=1.2.1
+  - scipy=1.10.0
+  - seaborn=0.12.2
+  - sympy=1.11.1
+  - xarray=2023.2.0
+  - xgboost=1.7.1
+  - catboost=1.1.1
+  - tabulate=0.8.9  # for BuckinghamPy
+  - pyyaml=6.0
