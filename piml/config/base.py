@@ -1,9 +1,7 @@
-import pathlib
-from typing import Dict, Any, List
+from typing import Dict, Any
+
 import pydantic
 import yaml
-
-from piml.base import DimSymbol
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -33,8 +31,3 @@ class BaseYAMLConfig(pydantic.BaseModel):
     class Config:
         # Allow, e.g., numpy arrays or custom types
         arbitrary_types_allowed = True
-
-
-class DimVars(BaseYAMLConfig):
-    dim_inputs: List[DimSymbol]
-    dim_output: DimSymbol

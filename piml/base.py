@@ -8,6 +8,8 @@ import pydantic
 SIGNED = True
 UNSIGNED = False
 
+# Pi target expression used to convert between dimensional and non-dimensional space
+PI_Y_expr = sp.symbols("PI_Y")
 
 @dataclasses.dataclass
 class DimSymbol:
@@ -30,6 +32,7 @@ class DimSymbol:
 class PiSet(pydantic.BaseModel):
     id: str
     feature_exprs: List[sp.Expr]
+    target_id: str
     target_expr: sp.Expr
     target_inv_expr: sp.Expr
 
