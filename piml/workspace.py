@@ -3,7 +3,7 @@ import os
 import sys
 import pathlib
 
-from piml.config import DimVars
+from piml.config import DimVars, Config
 
 
 class Workspace:
@@ -18,6 +18,7 @@ class Workspace:
 
         # Cache for variables
         self._dim_vars = None
+        self._config = None
 
         print(f"Using workspace {root}.")
 
@@ -78,3 +79,8 @@ class Workspace:
             self._dim_vars = DimVars.from_yaml((self.root / 'vars.yml').read_text())
         return self._dim_vars
 
+    @property
+    def config(self) -> Config:
+        if self._config is None:
+            self._config = Config.from_yaml((self.root / 'config.yml').read_text())
+        return self._config

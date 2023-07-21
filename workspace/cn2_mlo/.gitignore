@@ -1,0 +1,4 @@
+# We don't own the data, so we cannot commit them
+2_extracted/*.csv.gz
+3_processed/*
+4_train_test/*

@@ -11,6 +11,7 @@ UNSIGNED = False
 # Pi target expression used to convert between dimensional and non-dimensional space
 PI_Y_expr = sp.symbols("PI_Y")
 
+
 @dataclasses.dataclass
 class DimSymbol:
     """ Dataclass for dimensioned symbol, linking symbol to its sign and dimensions. """

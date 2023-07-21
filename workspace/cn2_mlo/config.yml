@@ -1,0 +1,12 @@
+data:
+  # Relative to workspace
+  path: !path "3_processed/MLO_Obs_Stacked.csv.gz"
+  test_interval:
+    - 2006-07-01
+    - 2006-07-15
+  # If columns in data file are named differently than in vars.yml, map them here
+  col_to_var:
+    u_u: var_u
+    tc_tc: var_theta
+    w_tc: shfx
+    theta_K: theta
