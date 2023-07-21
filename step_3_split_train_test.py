@@ -31,7 +31,7 @@ def write_dataset(df_train: pd.DataFrame, df_test: pd.DataFrame, base_name: str,
 
 
 def validate_dataset(df: pd.DataFrame, dim_vars: piml.config.DimVars):
-    required_vars = dim_vars.all_symbols + ["TIME", "DAY_YEAR"]
+    required_vars = dim_vars.dim_all_str + ["TIME", "DAY_YEAR"]
     missing_vars = set(required_vars) - set(df.columns)
     if len(missing_vars) > 0:
         raise ValueError(f"Validation failed! The following variables are missing: {missing_vars}.")

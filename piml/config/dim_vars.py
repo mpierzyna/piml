@@ -17,6 +17,11 @@ class DimVars(BaseYAMLConfig):
         raise KeyError(f"Symbol {item} not found.")
 
     @property
-    def all_symbols(self) -> List[str]:
+    def dim_all_str(self) -> List[str]:
         """ Return list of all symbols in config as list of strings """
         return [v.symbol.name for v in self.dim_inputs + [self.dim_output]]
+
+    @property
+    def dim_inputs_str(self) -> List[str]:
+        """ Return list of input symbols in config as list of strings """
+        return [v.symbol.name for v in self.dim_inputs]

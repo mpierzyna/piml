@@ -3,6 +3,7 @@ from typing import Tuple, Optional, Dict
 import pathlib
 
 from piml.config.base import BaseYAMLConfig
+from piml.config.flaml import ConfigFLAML
 
 
 class DataConfig(BaseYAMLConfig):
@@ -14,3 +15,5 @@ class DataConfig(BaseYAMLConfig):
 
 class Config(BaseYAMLConfig):
     data: DataConfig
+    automl_base_settings: ConfigFLAML
+    n_members: int
