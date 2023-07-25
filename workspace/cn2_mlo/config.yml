@@ -1,3 +1,47 @@
+# List dimensional variables
+# Set `signed` to `true` iff variable can take negative values, otherwise `false`.
+dim_vars:
+  inputs:
+    # Length scale
+    - symbol: "z"
+      signed: false
+      dimensions: "m"
+
+    # Shear-driven parameters
+    - symbol: "u_st"
+      signed: false
+      dimensions: "m * s^(-1)"
+    - symbol: "S"
+      signed: true  # todo: actually false
+      dimensions: "s^(-1)"
+    - symbol: "var_u"
+      signed: false
+      dimensions: "m^2 * s^(-2)"
+
+    # Buoancy-driven parameters
+    - symbol: "theta"
+      signed: false
+      dimensions: "K"
+    - symbol: "shfx"
+      signed: true
+      dimensions: "m * s^(-1) * K"
+    - symbol: "g"
+      signed: false
+      dimensions: "m * s^(-2)"
+    - symbol: "Gamma"
+      signed: true
+      dimensions: "K * m^(-1)"
+    - symbol: "var_theta"
+      signed: false
+      dimensions: "K^2"
+
+  # Attention! BuckinghamPy library requires integer powers of units,
+  # so we use Cn2^(3/2) instead of Cn2.
+  output:
+    symbol: "Cn2_tf"  # _tf is required because pre-pi transform is enabled
+    signed: true
+    dimensions: "m^(-1)"
+
 dataset:
   # Relative to workspace
   path: !path "3_processed/MLO_Obs_Stacked.csv.gz"

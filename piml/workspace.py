@@ -1,10 +1,9 @@
-import warnings
-from typing import Union
 import os
-import sys
 import pathlib
+import sys
+from typing import Union
 
-from piml.config import DimVars, Config
+from piml.config import Config
 
 
 class Workspace:
@@ -18,12 +17,10 @@ class Workspace:
             self.populate()
 
         # Cache for variables
-        self._dim_vars = None
         self._config = None
 
         # Internal variables
         self._config_path = self.root / "config.yml"
-        self._dim_vars_path = self.root / "dim_vars.yml"
         self._custom_code = None
 
         print(f"Using workspace {root}.")
@@ -83,12 +80,6 @@ class Workspace:
     def data_trained(self) -> pathlib.Path:
         path = self.root / '5_trained'
         return path
-
-    @property
-    def dim_vars(self) -> DimVars:
-        if self._dim_vars is None:
-            self._dim_vars = DimVars.from_yaml(self._dim_vars_path.read_text())
-        return self._dim_vars
 
     @property
     def config(self) -> Config:

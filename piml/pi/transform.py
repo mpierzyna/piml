@@ -13,13 +13,13 @@ class PiTargetTransformer:
     def __init__(self, pi_set: PiSet, dim_vars: DimVars):
         # Dimensional to non-dimensional (Pi_y -> y)
         eval_fn = sp.lambdify(
-            args=dim_vars.dim_all_str,
+            args=dim_vars.all_strs,
             expr=pi_set.target_expr,
             modules="numpy"
         )
         # Non-dimensional to dimensional (Pi_y -> y)
         eval_inv_fn = sp.lambdify(
-            args=[PI_Y_expr.name, *dim_vars.dim_inputs_str],
+            args=[PI_Y_expr.name, *dim_vars.input_strs],
             expr=pi_set.target_inv_expr,
             modules="numpy"
         )
@@ -45,7 +45,7 @@ class PiTargetTransformer:
         # Apply pi transformation
         y_pi = self.eval_fn(**{
             v: df_dim[v]
-            for v in self.dim_vars.dim_all_str
+            for v in self.dim_vars.all_strs
         })
         return pd.Series(y_pi, index=y_non_log.index)
 
@@ -61,7 +61,7 @@ class PiTargetTransformer:
             PI_Y_expr.name: y_pi,
             **{
                 v: df_dim[v]
-                for v in self.dim_vars.dim_inputs_str
+                for v in self.dim_vars.input_strs
             }
         })
         return pd.Series(y_non_log, index=y_pi.index)
@@ -72,10 +72,10 @@ def apply_pi_var(df_dim: pd.DataFrame, pi_expr: sp.Expr, dim_vars: DimVars) -> n
     This function explicitly makes no use of target/output to avoid data leakage into features/inputs.
     That means it will fail when Pi_y group is provided! Use transformer instead.
     """
-    eval_fn = sp.lambdify(dim_vars.dim_inputs_str, pi_expr, "numpy")
+    eval_fn = sp.lambdify(dim_vars.input_strs, pi_expr, "numpy")
     return eval_fn(**{
         v: df_dim[v]
-        for v in dim_vars.dim_inputs_str
+        for v in dim_vars.input_strs
     })
 
 
@@ -90,6 +90,6 @@ def apply_pi_set(df_dim: pd.DataFrame, s: PiSet, dim_vars: DimVars) -> pd.DataFr
     # Evaluate target/output
     pi_eval[s.target_id] = PiTargetTransformer(
         pi_set=s, dim_vars=dim_vars
-    ).fit(df_dim=df_dim).transform(y_non_log=df_dim[dim_vars.dim_output.symbol.name])
+    ).fit(df_dim=df_dim).transform(y_non_log=df_dim[dim_vars.output.symbol.name])
 
     return pd.DataFrame.from_dict(pi_eval)

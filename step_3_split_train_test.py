@@ -4,7 +4,7 @@ from typing import Tuple
 import pandas as pd
 
 import piml.config
-from piml.config.config import DatasetConfig
+from piml.config.dataset import DatasetConfig
 from piml.utils.pandas import df_f64_f32, to_gz_csv
 
 
@@ -34,13 +34,14 @@ def write_dataset(df_train: pd.DataFrame, df_test: pd.DataFrame,
 
 def validate_dataset(df: pd.DataFrame, ws: piml.Workspace):
     # Validate that all required input variables are present
-    required_vars = ws.dim_vars.dim_inputs_str + ["TIME", "DAY_YEAR"]
+    dim_vars = ws.config.dim_vars
+    required_vars = dim_vars.input_strs + ["TIME", "DAY_YEAR"]
     missing_vars = set(required_vars) - set(df.columns)
     if len(missing_vars) > 0:
         raise ValueError(f"Validation failed! The following variables are missing: {missing_vars}.")
 
     # Expected output/target variable name changes depending on whether pre-pi transform is requested..
-    dim_target = ws.dim_vars.dim_output.symbol.name
+    dim_target = dim_vars.output.symbol.name
     pre_pi_tf = ws.config.dataset.target_transformers.get("pre_pi")
 
     if pre_pi_tf is None:

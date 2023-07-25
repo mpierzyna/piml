@@ -11,13 +11,13 @@ if __name__ == "__main__":
     ot_sl = BuckinghamPi(n_jobs=-1)
 
     # Add all input variables to BuckinghamPi generator
-    for s in ws.dim_vars.dim_inputs:
+    for s in ws.config.dim_vars.inputs:
         ot_sl.add_variable(name=str(s.symbol), dimensions=s.dimensions)
 
     # Also add output
     ot_sl.add_variable(
-        name=str(ws.dim_vars.dim_output.symbol),
-        dimensions=ws.dim_vars.dim_output.dimensions
+        name=str(ws.config.dim_vars.output.symbol),
+        dimensions=ws.config.dim_vars.output.dimensions
     )
 
     # Generate pi terms and store them

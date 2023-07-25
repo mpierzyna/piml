@@ -4,12 +4,12 @@ from piml.pi.base import DimSymbol
 from piml.config.base import BaseYAMLConfig
 
 
-class DimVars(BaseYAMLConfig):
-    dim_inputs: List[DimSymbol]
-    dim_output: DimSymbol
+class DimVarsConfig(BaseYAMLConfig):
+    inputs: List[DimSymbol]
+    output: DimSymbol
 
     def __getitem__(self, item) -> DimSymbol:
-        for v in self.dim_inputs + [self.dim_output]:
+        for v in self.inputs + [self.output]:
             if v.symbol == item:
                 return v
             if v.symbol.name == item:
@@ -17,11 +17,11 @@ class DimVars(BaseYAMLConfig):
         raise KeyError(f"Symbol {item} not found.")
 
     @property
-    def dim_all_str(self) -> List[str]:
+    def all_strs(self) -> List[str]:
         """ Return list of all symbols in config as list of strings """
-        return [v.symbol.name for v in self.dim_inputs + [self.dim_output]]
+        return [v.symbol.name for v in self.inputs + [self.output]]
 
     @property
-    def dim_inputs_str(self) -> List[str]:
+    def input_strs(self) -> List[str]:
         """ Return list of input symbols in config as list of strings """
-        return [v.symbol.name for v in self.dim_inputs]
+        return [v.symbol.name for v in self.inputs]
