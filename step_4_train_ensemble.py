@@ -84,9 +84,9 @@ def main():
     # Load Pi sets and dimensional data
     pi_sets: List[piml.PiSet] = joblib.load(ws.data_extracted / "pi_sets_constrained.joblib")
     df_dim_train = pd.read_csv(
-        ws.data_train_test / "MLO_Obs_Stacked_2006-07-01_2006-07-15_TRAIN.csv.gz",  # todo: make universal
+        ws.data_train_test / ws.config.dataset.get_train_name(with_suffix=True),
         parse_dates=["TIME"],
-        )
+    )
 
     # Train all Pi sets
     # train_all_pi_sets(pi_sets, df_dim_train)

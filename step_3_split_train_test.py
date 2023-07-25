@@ -4,6 +4,7 @@ from typing import Tuple
 import pandas as pd
 
 import piml.config
+from piml.config.config import DatasetConfig
 from piml.utils.pandas import df_f64_f32, to_gz_csv
 
 
@@ -16,16 +17,17 @@ def split_test_train(df: pd.DataFrame, test_interval: Tuple[str, str]) -> Tuple[
     return df_train, df_test
 
 
-def write_dataset(df_train: pd.DataFrame, df_test: pd.DataFrame, base_name: str, train_test_dir: pathlib.Path) -> None:
+def write_dataset(df_train: pd.DataFrame, df_test: pd.DataFrame,
+                  ds_config: DatasetConfig, train_test_dir: pathlib.Path) -> None:
     """ Write train dataset, test dataset, and list of features to csv files. """
     to_gz_csv(
         df_f64_f32(df_train),
-        train_test_dir / f"{base_name}_TRAIN.csv.gz",
+        train_test_dir / ds_config.get_train_name(with_suffix=True),
         index=False
     )
     to_gz_csv(
         df_f64_f32(df_test),
-        train_test_dir / f"{base_name}_TEST.csv.gz",
+        train_test_dir / ds_config.get_test_name(with_suffix=True),
         index=False
     )
 
@@ -82,12 +84,6 @@ if __name__ == '__main__':
         print(f"Test ratio: {len(df_test) / len(df):.2f}.", end=" ")
         print(f"Number of days in test: {len(df_test['DAY_YEAR'].unique())}.", end=" ")
 
-        # Create base name
-        base_name = str(f.name)
-        for s in f.suffixes:
-            base_name = base_name.replace(s, "")
-        base_name += f"_{test_interval[0]}_{test_interval[1]}"
-
         # Write to disk
-        write_dataset(df_train, df_test, base_name=base_name, train_test_dir=ws.data_train_test)
+        write_dataset(df_train, df_test, ds_config=ws.config.dataset, train_test_dir=ws.data_train_test)
         print("Done!")
