@@ -51,3 +51,10 @@ class FLAMLConfig(BaseYAMLConfig):
             if not k.startswith("_")
         }
         return self_dict
+
+    def __init__(self, **kwargs):
+        # Initialize config normally
+        super().__init__(**kwargs)
+
+        # Set seed also for CV splitter to ensure reproducibility
+        self.split_type.random_state = self.seed

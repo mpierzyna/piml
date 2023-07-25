@@ -4,7 +4,7 @@ dataset:
   test_interval:
     - 2006-07-01
     - 2006-07-15
-  # If columns in data file are named differently than in vars.yml, map them here
+  # If columns in data file are named differently than in dim_vars.yml, map them here
   col_to_var:
     u_u: var_u
     tc_tc: var_theta

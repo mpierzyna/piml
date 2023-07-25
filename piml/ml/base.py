@@ -35,6 +35,6 @@ class Experiment(pydantic.BaseModel):
 
     def get_str(self) -> str:
         """ Return string representation of experiment """
-        dataset = self.config.dataset.path.stem
-        test_set_interval = self.config.dataset.test_interval_str
-        return f"{self.pi_set.id}_{dataset}_{test_set_interval}"
+        dataset = self.config.dataset.path.name
+        algos = "_".join(self.config.flaml.estimator_list)
+        return f"PiSet_{self.pi_set.id:03d}__{algos}__{dataset}"

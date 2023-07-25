@@ -28,7 +28,8 @@ def train_ensemble(base_exp: Experiment, df_train: pd.DataFrame, features: np.nd
         df_train["DAY_YEAR"],
         n_splits=base_exp.config.n_members,
         n_intervals_per_split=2,
-        n_days_per_interval=7
+        n_days_per_interval=7,
+        random_state=base_exp.config.flaml.seed,
     )
 
     # Train one member of ensemble at a time

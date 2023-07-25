@@ -31,7 +31,7 @@ class DimSymbol:
 
 
 class PiSet(pydantic.BaseModel):
-    id: str
+    id: int
     feature_exprs: List[sp.Expr]
     target_id: str
     target_expr: sp.Expr

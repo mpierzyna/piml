@@ -20,6 +20,10 @@ class Workspace:
         self._dim_vars = None
         self._config = None
 
+        # Internal variables
+        self._config_path = self.root / "config.yml"
+        self._dim_vars_path = self.root / "dim_vars.yml"
+
         print(f"Using workspace {root}.")
 
     @classmethod
@@ -81,11 +85,11 @@ class Workspace:
     @property
     def dim_vars(self) -> DimVars:
         if self._dim_vars is None:
-            self._dim_vars = DimVars.from_yaml((self.root / 'vars.yml').read_text())
+            self._dim_vars = DimVars.from_yaml(self._dim_vars_path.read_text())
         return self._dim_vars
 
     @property
     def config(self) -> Config:
         if self._config is None:
-            self._config = Config.from_yaml((self.root / 'config.yml').read_text())
+            self._config = Config.from_yaml(self._config_path.read_text())
         return self._config

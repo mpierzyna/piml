@@ -2,3 +2,4 @@
 2_extracted/*.csv.gz
 3_processed/*
 4_train_test/*
+5_trained/*
