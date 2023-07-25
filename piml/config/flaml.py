@@ -6,13 +6,13 @@ from sklearn.model_selection import KFold
 from piml.config.base import BaseYAMLConfig
 
 
-class ConfigFLAML(BaseYAMLConfig):
+class FLAMLConfig(BaseYAMLConfig):
     """ Lists all relevant FLAML parameters.
 
     Defaults are reasonable and should not require adjustment.
     For details, see: https://microsoft.github.io/FLAML/docs/reference/automl/automl#automl-objects
     """
-    estimator_list: List[str] = []  # will be filled automatically
+    estimator_list: List[str]
     metric: Union[str, Callable]
     time_budget: int  # in seconds
 

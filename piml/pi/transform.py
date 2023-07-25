@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import sympy as sp
 
-from piml.base import PiSet, PI_Y_expr
+from piml.pi.base import PiSet, PI_Y_expr
 from piml.config import DimVars
 
 
@@ -72,7 +72,6 @@ def apply_pi_var(df_dim: pd.DataFrame, pi_expr: sp.Expr, dim_vars: DimVars) -> n
     This function explicitly makes no use of target/output to avoid data leakage into features/inputs.
     That means it will fail when Pi_y group is provided! Use transformer instead.
     """
-    # The symbols need to be the exact order as the arguments of this!
     eval_fn = sp.lambdify(dim_vars.dim_inputs_str, pi_expr, "numpy")
     return eval_fn(**{
         v: df_dim[v]

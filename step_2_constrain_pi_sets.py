@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Dict, Tuple
+from typing import List
 
 import joblib
 import numpy as np
@@ -7,7 +7,7 @@ import sympy as sp
 
 import piml
 import piml.config
-import piml.base
+import piml.pi
 
 
 def sign_valid(pi: sp.Expr, dim_vars: piml.config.DimVars) -> bool:
@@ -52,9 +52,9 @@ def valid_pi_set(pi_set: List[sp.Expr], dim_vars: piml.config.DimVars) -> bool:
     return np.all(signs_valid) & contains_single_target(pi_set, dim_target=dim_vars.dim_output.symbol)
 
 
-def invert_pi_target(pi_expr: sp.Expr, dim_output: piml.base.DimSymbol) -> sp.Expr:
+def invert_pi_target(pi_expr: sp.Expr, dim_output: piml.pi.DimSymbol) -> sp.Expr:
     """ Invert provided non-dim target expression so that it can be used to recover dimensional target """
-    pi_inv = sp.solve(pi_expr - piml.base.PI_Y_expr, dim_output.symbol)
+    pi_inv = sp.solve(pi_expr - piml.pi.PI_Y_expr, dim_output.symbol)
 
     if len(pi_inv) > 1:
         raise ValueError(f"Inversion of {pi_expr} resulted in more than one solution. Abort!")

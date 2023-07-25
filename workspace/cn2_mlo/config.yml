@@ -1,4 +1,4 @@
-data:
+dataset:
   # Relative to workspace
   path: !path "3_processed/MLO_Obs_Stacked.csv.gz"
   test_interval:
@@ -11,7 +11,9 @@ data:
     w_tc: shfx
     theta_K: theta
 
-automl_base_settings:
+flaml:
+  estimator_list:
+    - "xgboost"
   time_budget: 120  # in seconds
   metric: "rmse"
 

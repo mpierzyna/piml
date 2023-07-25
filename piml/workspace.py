@@ -48,7 +48,7 @@ class Workspace:
 
     def populate(self):
         # Create data directories
-        for p in [self.data_raw, self.data_extracted, self.data_processed, self.data_train_test]:
+        for p in [self.data_raw, self.data_extracted, self.data_processed, self.data_train_test, self.data_trained]:
             p.mkdir(exist_ok=False)
 
         # todo: Create empty config files
@@ -71,6 +71,11 @@ class Workspace:
     @property
     def data_train_test(self) -> pathlib.Path:
         path = self.root / '4_train_test'
+        return path
+
+    @property
+    def data_trained(self) -> pathlib.Path:
+        path = self.root / '5_trained'
         return path
 
     @property

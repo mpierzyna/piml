@@ -4,7 +4,7 @@ from typing import Tuple
 import pandas as pd
 
 import piml.config
-from piml.utils import df_f64_f32, to_gz_csv
+from piml.utils.pandas import df_f64_f32, to_gz_csv
 
 
 def split_test_train(df: pd.DataFrame, test_interval: Tuple[str, str]) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -44,14 +44,14 @@ if __name__ == '__main__':
         # Read
         print(f"Reading {f.name}... ", end=" ")
         df = pd.read_csv(f)
-        df = df.rename(columns=ws.config.data.col_to_var)
+        df = df.rename(columns=ws.config.dataset.col_to_var)
 
         # Validate
         validate_dataset(df, ws.dim_vars)
         print("Valid! ", end=" ")
 
         # Split into test and training
-        test_interval = ws.config.data.test_interval
+        test_interval = ws.config.dataset.test_interval
         test_interval = (str(test_interval[0]), str(test_interval[1]))
         print(f"Performing train/test split with test interval {test_interval[0]} -- {test_interval[1]}... ", end=" ")
         df_train, df_test = split_test_train(df, test_interval)

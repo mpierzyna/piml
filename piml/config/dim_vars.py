@@ -1,6 +1,6 @@
 from typing import List
 
-from piml.base import DimSymbol
+from piml.pi.base import DimSymbol
 from piml.config.base import BaseYAMLConfig
 
 
