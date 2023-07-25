@@ -11,6 +11,7 @@ class DatasetConfig(BaseYAMLConfig):
     path: pathlib.Path
     test_interval: Tuple[datetime.date, datetime.date]
     col_to_var: Optional[Dict[str, str]] = None
+    target_transformers: Dict[str, str] = {}
 
     @property
     def test_interval_str(self) -> str:

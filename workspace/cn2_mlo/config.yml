@@ -10,6 +10,11 @@ dataset:
     tc_tc: var_theta
     w_tc: shfx
     theta_K: theta
+  # Optional: sklearn Transformers applied to target a) before pi transform and b) before training.
+  # They are applied in inverse order for evaluation.
+  target_transformers:
+    pre_pi: "custom_code.power_transformer"
+    pre_train: "custom_code.log10_transformer"
 
 flaml:
   estimator_list:

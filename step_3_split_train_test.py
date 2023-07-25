@@ -30,11 +30,33 @@ def write_dataset(df_train: pd.DataFrame, df_test: pd.DataFrame, base_name: str,
     )
 
 
-def validate_dataset(df: pd.DataFrame, dim_vars: piml.config.DimVars):
-    required_vars = dim_vars.dim_all_str + ["TIME", "DAY_YEAR"]
+def validate_dataset(df: pd.DataFrame, ws: piml.Workspace):
+    # Validate that all required input variables are present
+    required_vars = ws.dim_vars.dim_inputs_str + ["TIME", "DAY_YEAR"]
     missing_vars = set(required_vars) - set(df.columns)
     if len(missing_vars) > 0:
         raise ValueError(f"Validation failed! The following variables are missing: {missing_vars}.")
+
+    # Expected output/target variable name changes depending on whether pre-pi transform is requested..
+    dim_target = ws.dim_vars.dim_output.symbol.name
+    pre_pi_tf = ws.config.dataset.target_transformers.get("pre_pi")
+
+    if pre_pi_tf is None:
+        # If no pre-pi transform is enabled, just require variable to be present.
+        if dim_target not in df.columns:
+            raise ValueError(f"Validation failed! The dimensional target variable {dim_target} is missing.")
+    else:
+        # If pre-pi transform is enabled, we explicitly require dim target variable to end in `_tf`.
+        dim_target_tf = dim_target
+        dim_target = dim_target_tf[:-3]
+
+        if dim_target not in df.columns:
+            raise ValueError(
+                f"Validation failed! You requested a pre-pi transform: {pre_pi_tf}. "
+                f"For clarity, dataset must contain the non-transformed dimensional target variable in col XXX "
+                f"and the matching transformed variable must be named XXX_tf as dim_output. "
+                f"Could not find `{dim_target}` based on `{dim_target_tf}`."
+            )
 
 
 if __name__ == '__main__':
@@ -47,7 +69,7 @@ if __name__ == '__main__':
         df = df.rename(columns=ws.config.dataset.col_to_var)
 
         # Validate
-        validate_dataset(df, ws.dim_vars)
+        validate_dataset(df, ws)
         print("Valid! ", end=" ")
 
         # Split into test and training

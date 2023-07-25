@@ -37,6 +37,6 @@ dim_inputs:
 # Attention! BuckinghamPy library requires integer powers of units,
 # so we use Cn2^(3/2) instead of Cn2.
 dim_output:
-  symbol: "Cn2_tf"
+  symbol: "Cn2_tf"  # _tf is required because pre-pi transform is enabled
   signed: true
   dimensions: "m^(-1)"

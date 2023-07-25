@@ -1,3 +1,4 @@
+import warnings
 from typing import Union
 import os
 import sys
@@ -23,6 +24,7 @@ class Workspace:
         # Internal variables
         self._config_path = self.root / "config.yml"
         self._dim_vars_path = self.root / "dim_vars.yml"
+        self._custom_code = None
 
         print(f"Using workspace {root}.")
 
@@ -93,3 +95,20 @@ class Workspace:
         if self._config is None:
             self._config = Config.from_yaml(self._config_path.read_text())
         return self._config
+
+    @property
+    def custom_code(self):
+        """ Custom code from `custom_code.py` in workspace root, if it exists. """
+        if self._custom_code is None:
+            # Try to import custom code from workspace
+            path = sys.path
+            try:
+                sys.path.append(str(self.root.absolute()))
+                import custom_code
+                self._custom_code = custom_code
+            except ModuleNotFoundError:
+                # Reset path but deliberately raise error again to force me to catch it outside
+                sys.path = path
+                raise
+
+        return self._custom_code
