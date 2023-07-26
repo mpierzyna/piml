@@ -5,12 +5,12 @@ import pandas as pd
 import sympy as sp
 
 from piml.pi.base import PiSet, PI_Y_expr
-from piml.config import DimVars
+from piml.config.dim_vars import DimVarsConfig
 
 
 class PiTargetTransformer:
     """ Transform target variable between non-dimensional and dimensional form. """
-    def __init__(self, pi_set: PiSet, dim_vars: DimVars):
+    def __init__(self, pi_set: PiSet, dim_vars: DimVarsConfig):
         # Dimensional to non-dimensional (Pi_y -> y)
         eval_fn = sp.lambdify(
             args=dim_vars.all_strs,
@@ -67,7 +67,7 @@ class PiTargetTransformer:
         return pd.Series(y_non_log, index=y_pi.index)
 
 
-def apply_pi_var(df_dim: pd.DataFrame, pi_expr: sp.Expr, dim_vars: DimVars) -> np.ndarray:
+def apply_pi_var(df_dim: pd.DataFrame, pi_expr: sp.Expr, dim_vars: DimVarsConfig) -> np.ndarray:
     """ Numerically evaluate Pi variable on dataframe.
     This function explicitly makes no use of target/output to avoid data leakage into features/inputs.
     That means it will fail when Pi_y group is provided! Use transformer instead.
@@ -79,7 +79,7 @@ def apply_pi_var(df_dim: pd.DataFrame, pi_expr: sp.Expr, dim_vars: DimVars) -> n
     })
 
 
-def apply_pi_set(df_dim: pd.DataFrame, s: PiSet, dim_vars: DimVars) -> pd.DataFrame:
+def apply_pi_set(df_dim: pd.DataFrame, s: PiSet, dim_vars: DimVarsConfig) -> pd.DataFrame:
     """ Numerically evaluate Pi set on dataframe. """
     # Evaluate features/inputs
     pi_eval = {
