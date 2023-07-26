@@ -38,3 +38,8 @@ class Experiment(pydantic.BaseModel):
         dataset = self.config.dataset.path.name
         algos = "_".join(self.config.flaml.estimator_list)
         return f"PiSet_{self.pi_set.id:03d}__{algos}__{dataset}"
+
+    @property
+    def target_dim(self):
+        """ Shortcut to target variable name in dimensional space """
+        return self.config.dim_vars.output.symbol.name

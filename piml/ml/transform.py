@@ -1,33 +1,47 @@
+from typing import Protocol
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
 
 import piml
 from piml.config.dataset import DatasetConfig
 from piml.config.dim_vars import DimVarsConfig
 from piml.ml.utils import get_custom_tf
-from piml.pi.transform import apply_pi_set
+from piml.pi.transform import apply_pi_set, PiTargetTransformer
 
 
-class DimToPiTransformer(TransformerMixin, BaseEstimator):
-    """ Transform dimensional data to non-dimensional Pi data and apply pre-pi and pre-train transforms if specified """
+class InvertableTransformer(Protocol):
+    """ Invertable sklearn-compatible transformer.
+    Requires forward (fit_transform) and backward (inverse_transform) transforms to be implemented.
 
+    Note: This Protocol aims to be a minimal interface for invertable transformers. It is not complete and does not
+    contain all methods of sklearn transformers. It is only used for type checking and IDE support.
+    """
+    def fit_transform(self, X, y=None, **fit_params) -> pd.DataFrame:
+        ...
+
+    def inverse_transform(self, X, y=None, **fit_params) -> pd.DataFrame:
+        ...
+
+
+class DimToPiTransformer:
+    """ Transform data between dimensional and Pi space. """
     def __init__(self, pi_set: piml.PiSet, dim_vars: DimVarsConfig, dataset: DatasetConfig,
-                 pre_pi_tf: TransformerMixin = None, pre_train_tf: TransformerMixin = None):
+                 pre_pi_tf: InvertableTransformer = None, pre_train_tf: InvertableTransformer = None):
         self.pi_set = pi_set
         self.dim_vars = dim_vars
         self.dataset = dataset
         self.pre_pi_tf = pre_pi_tf
         self.pre_train_tf = pre_train_tf
 
-    def fit_transform(self, df_dim: pd.DataFrame, y=None, **fit_params):
-        # For compatibility with sklearn pipelines
-        return self.fit(df_dim).transform(df_dim)
-
-    def fit(self, df_dim: pd.DataFrame, y=None, **fit_kwargs) -> "DimToPiTransformer":
-        # No fitting necessary, so just return self
+    def fit(self, *, df_dim: pd.DataFrame) -> "DimToPiTransformer":
+        """ Provide dimensional data that serve as basis for transform and inverse transform. """
+        self.df_dim_ = df_dim.copy()
         return self
 
-    def transform(self, df_dim: pd.DataFrame, y=None, **fit_params) -> pd.DataFrame:
+    def transform(self) -> pd.DataFrame:
+        """ Transform dimensional data to Pi space and apply pre-pi and pre-train transforms if specified """
+        # Work on copy of data (@todo: Could be dangerous with big datasets!)
+        df_dim = self.df_dim_.copy()
+
         # Apply pre-pi transform to DIMENSIONAL target
         self.pre_pi_tf_applied_ = False
         if self.pre_pi_tf:
@@ -60,6 +74,43 @@ class DimToPiTransformer(TransformerMixin, BaseEstimator):
         self.features_ = df_pi.columns[:len(self.pi_set.feature_exprs)].to_numpy()
 
         return df_pi
+
+    def fit_transform(self, *, df_dim: pd.DataFrame) -> pd.DataFrame:
+        """ Fit transformer and transform data. """
+        return self.fit(df_dim=df_dim).transform()
+
+    def inverse_transform_y(self, y_pi: pd.Series) -> pd.Series:
+        """ Inverse-transform *target* from Pi space to original space.
+        All transforms are inverted in reverse order.
+        """
+        def to_series(y) -> pd.Series:
+            """ Make sure y is a series after transform. """
+            if not isinstance(y, pd.Series):
+                return pd.Series(y_pi, index=self.df_dim_.index)
+            return y
+
+        # Invert pre-train transform
+        if self.pre_train_tf_applied_:
+            print("Inverting pre-train transform: ", self.pre_train_tf)
+            y_pi = self.pre_train_tf.inverse_transform(y_pi)
+            y_pi = to_series(y_pi)
+
+        # Invert pi set
+        y_dim = PiTargetTransformer(
+            pi_set=self.pi_set, dim_vars=self.dim_vars
+        ).fit(
+            df_dim=self.df_dim_
+        ).inverse_transform(
+            y_pi=y_pi
+        )
+
+        # Invert pre-pi transform
+        if self.pre_pi_tf_applied_:
+            print("Inverting pre-pi transform: ", self.pre_pi_tf)
+            y_dim = self.pre_pi_tf.inverse_transform(y_dim)
+            y_dim = to_series(y_dim)
+
+        return y_dim
 
     @classmethod
     def from_workspace(cls, ws: piml.Workspace, pi_set: piml.PiSet) -> "DimToPiTransformer":
