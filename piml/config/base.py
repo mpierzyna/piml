@@ -4,6 +4,7 @@ Set up yaml serializer to read and write config files (based on ``pydantic.BaseM
 import pathlib
 from typing import Dict, Any
 
+import sympy as sp
 import pydantic
 import yaml
 
@@ -25,6 +26,12 @@ def path_constructor(loader: yaml.loader, node) -> pathlib.Path:
     )
 
 
+def sp_symbol_representer(dumper: yaml.Dumper, symbol: sp.Expr):
+    """ Represent ``sympy.Expr`` as string in yaml. """
+    # Do not use tag here because pydantic validator takes care of str to sympy conversion on deserialization.
+    return dumper.represent_str(str(symbol))
+
+
 def tuple_representer(dumper: yaml.Dumper, t: tuple):
     """ Convert tuple to yaml list. Attention! Deserialisation will be list not tuple! Pydantic will fix that. """
     return dumper.represent_sequence('tag:yaml.org,2002:seq', t, flow_style=True)
@@ -38,6 +45,9 @@ yaml.add_constructor('!path', path_constructor, Loader=Loader)
 
 # Register representer and constructor to convert tuple between Python and yaml.
 yaml.add_representer(tuple, tuple_representer, Dumper=Dumper)
+
+# Register representer for sympy symbols
+yaml.add_representer(sp.Symbol, sp_symbol_representer, Dumper=Dumper)
 
 
 class BaseYAMLConfig(pydantic.BaseModel):

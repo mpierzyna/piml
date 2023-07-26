@@ -1,1 +1,1 @@
-from .base import PiSet, DimSymbol, PI_Y_expr
+from .base import PiSet, PI_Y_expr

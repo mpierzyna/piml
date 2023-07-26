@@ -4,9 +4,10 @@ import sympy as sp
 
 import piml
 import piml.pi
+from piml.config.dim_vars import DimSymbol
 
 
-def invert_pi_target(pi_expr: sp.Expr, dim_output: piml.pi.DimSymbol) -> sp.Expr:
+def invert_pi_target(pi_expr: sp.Expr, dim_output: DimSymbol) -> sp.Expr:
     """ Invert provided non-dim target expression so that it can be used to recover dimensional target """
     pi_inv = sp.solve(pi_expr - piml.pi.PI_Y_expr, dim_output.symbol)
 

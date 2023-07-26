@@ -30,8 +30,9 @@ def train_pi_set(ws: piml.Workspace, s: piml.PiSet, df_dim_train: pd.DataFrame) 
     ensemble_name = f"{base_exp.get_str()}__{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
     la = LazyArray(ws.data_trained / ensemble_name / "ensemble", overwrite=True)
 
-    # Copy config and latex Pi set to ensemble folder for reference
-    (ws.data_trained / ensemble_name / "config.yml").write_text(ws._config_path.read_text())
+    # Write config and latex Pi set to ensemble folder for documentation.
+    # Using the yaml() method of the config object ensures that also default values are written.
+    (ws.data_trained / ensemble_name / "config.yml").write_text(ws.config.yaml())
     (ws.data_trained / ensemble_name / "pi_set.md").write_text(pi_sets_to_latex([s]))
 
     # Start training
