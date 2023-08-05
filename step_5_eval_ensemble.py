@@ -2,6 +2,7 @@ from typing import List
 
 import joblib
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score, mean_squared_error
@@ -68,4 +69,15 @@ if __name__ == '__main__':
         ax.plot(df_dim_test["TIME"], df_dim_test[target_dim], color="red", linewidth=.75)
         ax.set_ylabel(target_dim)
         ax.set_yscale("log")
+        fig.show()
+
+        # Plot feature importance
+        perm_fi_ens = np.array([
+            m.perm_fi
+            for m in ens
+        ])
+        perm_fi_df = pd.DataFrame(data=perm_fi_ens, columns=features).melt(var_name="feature", value_name="perm_fi")
+
+        fig, ax = plt.subplots()
+        sns.boxplot(perm_fi_df, x="feature", y="perm_fi", ax=ax)
         fig.show()
