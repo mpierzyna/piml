@@ -79,7 +79,7 @@ def apply_pi_var(df_dim: pd.DataFrame, pi_expr: sp.Expr, dim_vars: DimVarsConfig
     })
 
 
-def apply_pi_set(df_dim: pd.DataFrame, s: PiSet, dim_vars: DimVarsConfig) -> pd.DataFrame:
+def apply_pi_set(df_dim: pd.DataFrame, s: PiSet, dim_vars: DimVarsConfig, with_y: bool) -> pd.DataFrame:
     """ Numerically evaluate Pi set on dataframe. """
     # Evaluate features/inputs
     pi_eval = {
@@ -88,8 +88,9 @@ def apply_pi_set(df_dim: pd.DataFrame, s: PiSet, dim_vars: DimVarsConfig) -> pd.
     }
 
     # Evaluate target/output
-    pi_eval[s.target_id] = PiTargetTransformer(
-        pi_set=s, dim_vars=dim_vars
-    ).fit(df_dim=df_dim).transform(y_non_log=df_dim[dim_vars.output.symbol.name])
+    if with_y:
+        pi_eval[s.target_id] = PiTargetTransformer(
+            pi_set=s, dim_vars=dim_vars
+        ).fit(df_dim=df_dim).transform(y_non_log=df_dim[dim_vars.output.symbol.name])
 
     return pd.DataFrame.from_dict(pi_eval)

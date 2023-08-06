@@ -24,7 +24,7 @@ def train_pi_set(ws: piml.Workspace, s: piml.PiSet, df_dim_train: pd.DataFrame) 
 
     # Set up dimensional data transformer. Specified pre-pi and pre-train transforms will be applied automatically.
     dim_to_pi_tf = DimToPiTransformer.from_workspace(ws=ws, pi_set=s)
-    df_train = dim_to_pi_tf.fit_transform(df_dim=df_dim_train)
+    df_train = dim_to_pi_tf.fit(df_dim=df_dim_train).transform_X_y()
 
     # Create LazyArray, which will hold pickled version of each trained member
     ensemble_name = f"{base_exp.get_str()}__{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"

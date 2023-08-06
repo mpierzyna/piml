@@ -37,7 +37,7 @@ if __name__ == '__main__':
         # Transform dimensional data to Pi space
         pi_tf = DimToPiTransformer.from_workspace(ws=ws, pi_set=ens[0].pi_set)
         pi_tf.fit(df_dim=df_dim_test)
-        df_pi_test = pi_tf.transform()
+        df_pi_test = pi_tf.transform_X_y()
 
         # Make predictions using ensemble
         X_pi_test = df_pi_test[features].to_numpy()
