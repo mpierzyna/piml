@@ -47,6 +47,7 @@ class DimToPiTransformer:
         # Evaluate features/inputs but NOT target.
         df_X_pi = apply_pi_set(df_dim=self.df_dim_, s=self.pi_set, dim_vars=self.dim_vars, with_y=False)
         df_X_pi["DAY_YEAR"] = self.df_dim_["DAY_YEAR"]  # Retain for ensemble splitting
+        self.features_ = df_X_pi.columns[:-1]
         return df_X_pi
 
     def transform_y(self) -> pd.Series:

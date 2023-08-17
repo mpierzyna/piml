@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import warnings
 from typing import List
@@ -40,12 +41,20 @@ def train_pi_set(ws: piml.Workspace, s: piml.PiSet, df_dim_train: pd.DataFrame) 
 
 
 def train_all_pi_sets(ws: piml.Workspace, pi_sets: List[piml.PiSet], df_dim_train: pd.DataFrame) -> None:
+    """ Train all available Pi sets """
     for s in pi_sets:
         try:
             train_pi_set(ws, s, df_dim_train)
         except ValueError as e:
             warnings.warn(str(e))
             continue
+
+
+def parse_args():
+    """ Parse command line arguments """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pi_set", type=int, default=None)
+    return parser.parse_args()
 
 
 def main():
@@ -58,11 +67,16 @@ def main():
         parse_dates=["TIME"],
     )
 
-    # Train all Pi sets
-    # train_all_pi_sets(pi_sets, df_dim_train)
-
-    # Train only specific Pi set
-    train_pi_set(ws, pi_sets[13], df_dim_train)
+    # Parse cmd arguments to decide between training all pi sets or just a specific one
+    args = parse_args()
+    if args.pi_set is None:
+        # Train all Pi sets
+        print("Training all Pi sets.")
+        train_all_pi_sets(ws, pi_sets, df_dim_train)
+    else:
+        # Train only specific Pi set
+        print(f"Training Pi set {args.pi_set}.")
+        train_pi_set(ws, pi_sets[args.pi_set], df_dim_train)
 
 
 if __name__ == '__main__':
