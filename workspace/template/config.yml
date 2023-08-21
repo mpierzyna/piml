@@ -1,0 +1,47 @@
+# List dimensional variables
+# Set `signed` to `true` iff variable can take negative values, otherwise `false`.
+dim_vars:
+  inputs:
+    # Input
+    - symbol: "x1"
+      signed: false
+      dimensions: "m"
+    - symbol: "x2"
+      signed: true
+      dimensions: "m"
+
+  output:
+    symbol: "y"
+    signed: true
+    dimensions: "m^(-1)"
+
+dataset:
+  # Relative to workspace
+  path: !path "3_processed/data.csv.gz"
+  test_interval:
+    - 2006-07-01
+    - 2006-07-15
+  # If columns in data file are named differently than in `dim_vars` above, map them here
+  col_to_var:
+    long_name: x1
+  # Optional: sklearn Transformers applied to target a) before pi transform and b) before training.
+  # They are applied in inverse order for evaluation.
+  target_transformers:
+    pre_pi: "custom_code.power_transformer"
+    pre_train: "custom_code.log10_transformer"
+
+# FLAML settings, for details see https://microsoft.github.io/FLAML/docs/reference/automl/automl#automl-objects.
+# For Pi-ML defaults see `pi-ml/config/*.py`.
+flaml:
+  estimator_list:
+    - "xgboost"
+  time_budget: 30  # in seconds
+  metric: "rmse"
+
+  # Technical settings
+  n_jobs: 8
+  verbose: 3
+  seed: 0  # Important for reproducibility
+
+# Number of members in ensemble
+n_members: 25

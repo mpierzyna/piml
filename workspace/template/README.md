@@ -1,0 +1,2 @@
+Template workspace. Copy this directory to create a new workspace for your own problem.
+**Do not change the directory structure**. The code relies on the structure of the workspace to find the required files.
