@@ -48,7 +48,7 @@ dataset:
   test_interval:
     - 2006-07-01
     - 2006-07-15
-  # If columns in data file are named differently than in dim_vars.yml, map them here
+  # If columns in data file are named differently than in `dim_vars` above, map them here
   col_to_var:
     u_u: var_u
     tc_tc: var_theta
@@ -63,7 +63,7 @@ dataset:
 flaml:
   estimator_list:
     - "xgboost"
-  time_budget: 120  # in seconds
+  time_budget: 30  # in seconds
   metric: "rmse"
 
   # Technical settings
@@ -71,4 +71,4 @@ flaml:
   verbose: 3
   seed: 0  # Important for reproducibility
 
-n_members: 15
+n_members: 25
