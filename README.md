@@ -21,7 +21,7 @@ DOI: https://doi.org/10.1364/OL.492652 (also on [arxiv](https://arxiv.org/abs/23
 
 ## Example: Optical turbulence in the atmospheric surface layer
 An example workspace set up to model optical turbulence strength $C_n^2$ following Pierzyna et al. (2023) is given 
-in [workspace/cn2_mlo](piml/workspace/cn2_mlo).
+in [workspace/cn2_mlo](workspace/cn2_mlo).
 This directory also contains the trained $C_n^2$ models (**coming soon**).
 
 ## Quick start
@@ -35,7 +35,7 @@ This directory also contains the trained $C_n^2$ models (**coming soon**).
     export PIML_WORKSPACE=workspace/my_workspace
     ```
    Note, this needs to be repeated everytime you open a new terminal.
-3. Follow the example/tutorial in [workspace/cn2_mlo](piml/workspace/cn2_mlo) to set up your own `config.yml`.
+3. Follow the example/tutorial in [workspace/cn2_mlo](workspace/cn2_mlo) to set up your own `config.yml`.
 
 ### Run the model pipeline
 Activate the conda environment:
