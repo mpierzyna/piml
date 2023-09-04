@@ -1,10 +1,9 @@
 from typing import List
 
-import joblib
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.metrics import r2_score, mean_squared_error
 
 import piml
@@ -20,22 +19,27 @@ if __name__ == '__main__':
     ensembles = [ens_path for ens_path in ensembles if ens_path.is_dir()]
     ensembles = sorted(ensembles)
 
-    # Load Pi sets and dimensional data
-    pi_sets: List[piml.PiSet] = joblib.load(ws.data_extracted / "pi_sets_constrained.joblib")
+    # Dimensional test data
     df_dim_test = pd.read_csv(
         ws.data_train_test / ws.config.dataset.get_test_name(with_suffix=True),
         parse_dates=["TIME"],
     )
 
+    # Store ensemble scores
+    ens_scores = []
+    pi_sets = []
+
     for ens_path in ensembles:
         # Load ensemble
         ens: List[Experiment] = LazyArray(ens_path, overwrite=False).gather_to_mem()
-        features = ens[0].features
+        features = np.array(ens[0].features)  # ensure np array
         target = ens[0].target
         target_dim = ens[0].target_dim[:-3]
+        pi_set = ens[0].pi_set
+        pi_sets.append(pi_set)
 
         # Transform dimensional data to Pi space
-        pi_tf = DimToPiTransformer.from_workspace(ws=ws, pi_set=ens[0].pi_set)
+        pi_tf = DimToPiTransformer.from_workspace(ws=ws, pi_set=pi_set)
         pi_tf.fit(df_dim=df_dim_test)
         df_pi_test = pi_tf.transform_X_y()
 
@@ -62,6 +66,7 @@ if __name__ == '__main__':
         ])
         print(f"R2: {scores[:, 0].mean():.3f} +/- {scores[:, 0].std():.3f}")
         print(f"RMSE: {scores[:, 1].mean():.3f} +/- {scores[:, 1].std():.3f}")
+        ens_scores.append(scores)
 
         # Plot predictions
         fig, ax = plt.subplots()
@@ -81,3 +86,24 @@ if __name__ == '__main__':
         fig, ax = plt.subplots()
         sns.boxplot(perm_fi_df, x="feature", y="perm_fi", ax=ax)
         fig.show()
+
+    # %% Plot ensemble score overview and complexity
+    ens_scores = np.array(ens_scores)
+    df_ens_scores = pd.DataFrame(
+        data=ens_scores[:, :, 1].T,  # RMSE
+        columns=[f"Set {s.id}" for s in pi_sets]
+    )
+
+    # Compute complexity
+    complexity = np.array([
+        [len(pi.free_symbols) for pi in s.all_exprs]
+        for s in pi_sets
+    ])
+
+    fig, (ax_box, ax_complexity) = plt.subplots(ncols=2, figsize=(10, 5), sharey="row")
+    sns.boxplot(
+        data=df_ens_scores.melt(var_name="Set", value_name="RMSE"),
+        x="RMSE", y="Set",
+        ax=ax_box
+    )
+    sns.heatmap(complexity, ax=ax_complexity)
