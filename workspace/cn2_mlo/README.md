@@ -9,6 +9,9 @@ optical turbulence in the atmospheric surface layer". _Optics Letters_, vol. 48,
 
 DOI: https://doi.org/10.1364/OL.492652 (also on [arxiv](https://arxiv.org/abs/2304.12177))
 
+### Dataset
+The trained $C_n^2$ models are uploaded to Zenodo: https://zenodo.org/record/8316104.
+
 ## Setup
 Please follow the instructions in the [README.md](../README.md) of the main repository to set up the required Python
 packages in a new conda environment. Afterward, activate the conda environment:
