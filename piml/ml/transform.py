@@ -23,7 +23,20 @@ class InvertableTransformer(Protocol):
 
 
 class DimToPiTransformer:
-    """ Transform data between dimensional and Pi space. """
+    """ Transform data between dimensional and Pi space.
+
+    If `pre_pi_tf` is specified,
+    - we expect that the output in config has suffix `_tf`, e.g., `y_tf`  (`dim_target_tf`).
+    - we expect that dataset contains a column with the same name but **without** the suffix, e.g., `y`. (`dim_target`)
+    - we apply the transformation in `.transform_y()` and `.inverse_transform_y()` by
+        - taking the untransformed data from column `y`
+        - applying the transformation and storing the result in column `y_tf`
+        - converting `y_tf` to Pi space
+
+    If `pre_pi_tf` is **not** specified, `dim_target` and `dim_target_tf` are the same and
+    `y` is directly transformed to Pi space.
+
+    """
     def __init__(self, pi_set: piml.PiSet, dim_vars: DimVarsConfig, dataset: DatasetConfig,
                  pre_pi_tf: InvertableTransformer = None, pre_train_tf: InvertableTransformer = None):
         self.pi_set = pi_set
@@ -32,9 +45,16 @@ class DimToPiTransformer:
         self.pre_pi_tf = pre_pi_tf
         self.pre_train_tf = pre_train_tf
 
-        # Expected target column names. Very nested... Sorry.
-        self.dim_target_tf = self.dim_vars.output.symbol.name
-        self.dim_target = self.dim_target_tf[:-3]  # dim_target_tf is expected to have `_tf` suffix, so remove it
+        if self.pre_pi_tf:
+            # If pre_pi_tf is configured, we expect the dim target to have `_tf` suffix
+            self.dim_target_tf = self.dim_vars.output.symbol.name
+            self.dim_target = self.dim_target_tf[:-3]  # dim_target_tf is expected to have `_tf` suffix, so remove it
+        else:
+            # If it is not configured, `dim_target` and `dim_target_tf` are the same
+            self.dim_target = self.dim_vars.output.symbol.name
+            self.dim_target_tf = self.dim_target
+
+        # This is the variable name the regression expects
         self.pi_target = self.pi_set.target_id
 
     def fit(self, *, df_dim: pd.DataFrame) -> "DimToPiTransformer":
@@ -107,7 +127,7 @@ class DimToPiTransformer:
         if self.pre_train_tf:
             print("Inverting pre-train transform: ", self.pre_train_tf)
             y_pi = self.pre_train_tf.inverse_transform(y_pi)
-            y_pi = to_series(y_pi)
+        y_pi = to_series(y_pi)
 
         # 2) Invert pi set
         y_dim = PiTargetTransformer(
@@ -122,7 +142,7 @@ class DimToPiTransformer:
         if self.pre_pi_tf:
             print("Inverting pre-pi transform: ", self.pre_pi_tf)
             y_dim = self.pre_pi_tf.inverse_transform(y_dim)
-            y_dim = to_series(y_dim)
+        y_dim = to_series(y_dim)
 
         return y_dim
 

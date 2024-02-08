@@ -33,8 +33,6 @@ if __name__ == '__main__':
         # Load ensemble
         ens: List[Experiment] = LazyArray(ens_path, overwrite=False).gather_to_mem()
         features = np.array(ens[0].features)  # ensure np array
-        target = ens[0].target
-        target_dim = ens[0].target_dim[:-3]
         pi_set = ens[0].pi_set
         pi_sets.append(pi_set)
 
@@ -56,7 +54,8 @@ if __name__ == '__main__':
         ])
 
         # Compute scores
-        log_y_dim_test = np.log10(df_dim_test[target_dim].to_numpy())
+        dim_target = pi_tf.dim_target_tf  # DimToPiTransformer takes care of setting correct target name
+        log_y_dim_test = np.log10(df_dim_test[dim_target].to_numpy())
         scores = np.array([
             [
                 r2_score(log_y_dim_test, log_y_i),
@@ -71,8 +70,8 @@ if __name__ == '__main__':
         # Plot predictions
         fig, ax = plt.subplots()
         ax.plot(df_dim_test["TIME"], y_dim_pred_ens.T, color="gray", alpha=0.5)
-        ax.plot(df_dim_test["TIME"], df_dim_test[target_dim], color="red", linewidth=.75)
-        ax.set_ylabel(target_dim)
+        ax.plot(df_dim_test["TIME"], df_dim_test[dim_target], color="red", linewidth=.75)
+        ax.set_ylabel(dim_target)
         ax.set_yscale("log")
         fig.show()
 
